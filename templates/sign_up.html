@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Signup - RWC</title>
+<style>
+    /* Put your full CSS from your provided signup page here */
+    body {
+        font-family: sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 0;
+    }
+    #main {
+        width: 100%;
+        max-width: 1200px;
+        min-height: 700px;
+        border: 1px solid #ddd;
+        display: flex;
+        overflow: hidden;
+        margin: 30px auto;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+        background-color: #fff;
+    }
+    #div1, #div2 {
+        width: 50%;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    #div2 img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    #logo {
+        width: 200px;
+        display: block;
+        margin: 30px auto 0;
+    }
+    #div1 h1 {
+        text-align: center;
+        color: #333;
+        margin-top: 20px;
+    }
+    input {
+        width: 100%;
+        height: 40px;
+        padding: 0 15px;
+        margin-top: 15px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        outline: none;
+        box-sizing: border-box;
+    }
+    .input-container {
+        position: relative;
+        width: 80%;
+        margin: 0 auto;
+    }
+    button {
+        width: 100%;
+        height: 40px;
+        margin-top: 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        outline: none;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    .step {
+        display: none;
+        animation: slide 0.4s ease;
+    }
+    .step.active {
+        display: block;
+    }
+    #see {
+        position: relative;
+        right: 10px;
+        top: 60%;
+        transform: translateY(-50%);
+        height: 30px;
+        width: 40px;
+        border: none;
+        background: blue;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    @keyframes slide {
+        from {transform: translateX(50px); opacity: 0;}
+        to {transform: translateX(0); opacity: 1;}
+    }
+    @media (max-width: 768px) {
+        #main {
+            flex-direction: column;
+            height: auto;
+            margin: 10px;
+            box-shadow: none;
+            border-radius: 0;
+        }
+        #div1, #div2 {
+            width: 100%;
+            padding: 10px;
+        }
+        #div2 {
+            display: none; 
+        }
+        #logo {
+            width: 150px;
+        }
+        .input-container {
+            width: 90%;
+        }
+    }
+</style>
+</head>
+<body>
+    <div id="main">
+        <div id="div2">
+            <img src="/static/image/image.png" alt="illustration" />
+        </div>
+        <div id="div1">
+            <img src="/static/image/logo.png" alt="logo" id="logo" />
+            <h1>Sign Up</h1>
+            <form id="signupForm">
+                <div class="step active">
+                    <div class="input-container">
+                        <input type="text" name="name" placeholder="Full Name" />
+                        <input type="text" name="username" id="usernameInput" placeholder="Username (unique, for login)" style="margin-top:10px;" />
+                        <button type="button" onclick="nextStep()">Next</button>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="input">
+                        <input type="radio" name="country" id="rw" value="Rwandans" /> Rwandans
+                        <input type="radio" name="country" id="out" value="Outsider" /> Outsider
+                        <div id="rwFields" style="display:none; margin-top:15px;">
+                            <input type="text" name="national_id" placeholder="National ID" />
+                            <input type="text" name="province" placeholder="Province" />
+                        </div>
+                        <div id="outFields" style="display:none; margin-top:15px;">
+                            <input type="text" name="passport_no" placeholder="Passport Number" />
+                            <input type="text" name="country_name" placeholder="Country" />
+                        </div>
+                        <button type="button" onclick="validateCountry()">Next</button>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="input-container">
+                        <input type="date" name="dob" />
+                        <button type="button" onclick="nextStep()">Next</button>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="input-container">
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <input type="text" value="+250" disabled style="width:60px;background:#eee;color:#333;border-radius:10px;border:1px solid #ccc;" tabindex="-1" />
+                            <input type="tel" name="phone" id="phoneInput" placeholder="7XXXXXXXX" maxlength="9" pattern="[0-9]{9}" style="width:calc(100% - 70px);" />
+                        </div>
+                        <button type="button" onclick="nextStep()">Next</button>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="input-container">
+                        <input type="email" name="email" placeholder="Email" />
+                        <button type="button" onclick="nextStep()">Next</button>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="input-container">
+                        <input type="password" name="password" placeholder="Password" id="password" />
+                        <input type="password" name="co_password" placeholder="Confirm Password" id="co-password" />
+                        <button type="button" id="see">see</button>
+                        <button type="submit">Finish</button>
+                    </div>
+                </div>
+            </form>
+            <footer>
+                <p style="text-align: center;">
+                    Have an account? <a href="/login-page" style="text-decoration: none;">login</a>
+                </p>
+                <p style="text-align: center;">&copy; 2025 RwandaChat. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        const steps = document.querySelectorAll(".step");
+
+        function nextStep() {
+            steps[currentStep].classList.remove("active");
+            currentStep++;
+            if (currentStep < steps.length) {
+                steps[currentStep].classList.add("active");
+            } else {
+                // If beyond last step, show last step and focus submit
+                currentStep = steps.length - 1;
+                steps[currentStep].classList.add("active");
+                // Focus the Finish button
+                const finishBtn = steps[currentStep].querySelector('button[type="submit"]');
+                if (finishBtn) finishBtn.focus();
+            }
+        }
+
+        const rwRadio = document.getElementById("rw");
+        const outRadio = document.getElementById("out");
+        const rwFields = document.getElementById("rwFields");
+        const outFields = document.getElementById("outFields");
+
+        rwRadio.addEventListener("change", function () {
+            rwFields.style.display = "block";
+            outFields.style.display = "none";
+        });
+        outRadio.addEventListener("change", function () {
+            outFields.style.display = "block";
+            rwFields.style.display = "none";
+        });
+
+        function validateCountry() {
+            if (rwRadio.checked) {
+                const nid = document.querySelector("[name='national_id']").value.trim();
+                const province = document.querySelector("[name='province']").value.trim();
+                if (!nid || !province) {
+                    alert("Please fill in National ID and Province.");
+                    return;
+                }
+            } else if (outRadio.checked) {
+                const passport = document.querySelector("[name='passport_no']").value.trim();
+                const country = document.querySelector("[name='country_name']").value.trim();
+                if (!passport || !country) {
+                    alert("Please fill in Passport Number and Country.");
+                    return;
+                }
+            } else {
+                alert("Please select your category.");
+                return;
+            }
+            nextStep();
+        }
+
+        let see = document.getElementById("see");
+        let password = document.getElementById("password");
+        let co_password = document.getElementById("co-password");
+        see.addEventListener("click", function () {
+            if (password.type === "password" && co_password.type === "password") {
+                password.type = "text";
+                co_password.type = "text";
+                see.textContent = "hide";
+            } else {
+                password.type = "password";
+                co_password.type = "password";
+                see.textContent = "see";
+            }
+        });
+
+        document.getElementById("signupForm").addEventListener("submit", function (e) {
+            alert("Submit event fired");
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value.trim();
+            });
+
+            // Validate all required fields
+            if (!data.name) return alert("Full Name is required.");
+            if (!data.username) return alert("Username is required.");
+            if (!/^[a-zA-Z0-9_.-]{3,20}$/.test(data.username)) return alert("Username must be 3-20 characters, letters, numbers, or ._- only.");
+            if (!data.country) return alert("Please select your category.");
+            if (data.country === "Rwandans") {
+                if (!data.national_id) return alert("National ID is required.");
+                if (!data.province) return alert("Province is required.");
+            } else if (data.country === "Outsider") {
+                if (!data.passport_no) return alert("Passport Number is required.");
+                if (!data.country_name) return alert("Country is required.");
+            }
+            if (!data.dob) return alert("Date of birth is required.");
+            // Phone validation
+            const phoneDigits = document.getElementById('phoneInput').value.trim();
+            if (!phoneDigits) return alert("Phone number is required.");
+            if (!/^7\d{8}$/.test(phoneDigits)) return alert("Phone number must be 9 digits and start with 7 (e.g. 7XXXXXXXX).");
+            data.phone = '+250' + phoneDigits;
+            if (!data.email) return alert("Email is required.");
+            if (!data.password) return alert("Password is required.");
+            if (!data.co_password) return alert("Confirm password is required.");
+
+            // Age validation (must be >= 16)
+            const dob = new Date(data.dob);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+            if (age < 16) return alert("You must be at least 16 years old to sign up.");
+
+            // Password match
+            if (data.password !== data.co_password) return alert("Passwords do not match.");
+
+            // alert("Validation passed, sending fetch...");
+            fetch("/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    alert("Fetch response received");
+                    if (res.success) {
+                        alert(res.message);
+                        window.location.href = "/login-page";
+                    } else {
+                        alert("Error: " + res.message);
+                    }
+                })
+                .catch((err) => alert("Request failed: " + err));
+        });
+    </script>
+</body>
+</html>

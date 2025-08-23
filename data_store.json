@@ -1,0 +1,295 @@
+{
+  "users": [
+    {
+      "id": "b210e00a-8beb-4775-b2d1-04ad422480c0",
+      "username": "loic",
+      "name": "aime loic",
+      "email": "kingaime132@gmail.com",
+      "password": "scrypt:32768:8:1$krEG5e2oC8GMs9Zj$baff5f93be7031f2fdfd685596f8b7f927cc3c73ff38bdd26a1cf64b814932b878c5fcf1ab25ffffb5fc486b062df95920eb801705150dab302b33b7e79c7821",
+      "country": "Rwandans",
+      "national_id": "12345678",
+      "province": "kigali",
+      "passport_no": "",
+      "country_name": "",
+      "dob": "2008-06-04",
+      "phone": "+250791749219",
+      "bio": "",
+      "profile_pic": "/uploads/0505e679a444433db81d4e6b65c8acb1_16.png",
+      "created_at": "2025-08-13T15:34:24.241298"
+    },
+    {
+      "id": "99dbce73-e0cc-4577-8a59-a51aaa596040",
+      "username": "chantos",
+      "name": "uwamwezi chantal",
+      "email": "uwamwezicha@gmail.com",
+      "password": "scrypt:32768:8:1$ATeBSXG3iyVGnX0x$2bb7bed545a5041f203c1e4a81d452eeb60b87e36dacbdaf5aa5dcdcb1b0dcc347f2d233016d9ad0d95a4db17fe05253f37d6fbfc01cbb298eba605c0708320f",
+      "country": "Rwandans",
+      "national_id": "12345678",
+      "province": "sourth",
+      "passport_no": "",
+      "country_name": "",
+      "dob": "1977-05-26",
+      "phone": "+250788745597",
+      "bio": "",
+      "profile_pic": null,
+      "created_at": "2025-08-13T17:17:27.627927"
+    },
+    {
+      "id": "5d864d5e-703f-4443-ab17-a3a8ec2fa382",
+      "username": "Mico_Raissa",
+      "name": "MICOMYIZA Raissa",
+      "email": "micomyizaraissa@2008",
+      "password": "scrypt:32768:8:1$Go7p9yNbTZVgI8Yu$4de3798f6a7b6232d57d730ea985e82d61b929f1f8fb7710363c0daa156eafdc0c5bbbeff75a7a4831b6bf753664137150b8464a9e7127ce8351b7f887738e52",
+      "country": "Rwandans",
+      "national_id": "33333333",
+      "province": "Kigali city",
+      "passport_no": "",
+      "country_name": "",
+      "dob": "2008-04-14",
+      "phone": "+250738400470",
+      "bio": "",
+      "profile_pic": null,
+      "created_at": "2025-08-14T07:06:40.250708"
+    },
+    {
+      "id": "80dac6b2-afeb-4648-b126-656b78d51ac1",
+      "username": "arsene",
+      "name": "arsene kevin",
+      "email": "arseneniyigena60@gmail.com",
+      "password": "scrypt:32768:8:1$juTKw4IO8IPM0kIj$eb807f69bfacda4b82b069d9d0d1c360b2c18d81809bc2e7a7e42005b9f73911674c85feb829838f2949ffa525ec88c73fba649160e5c45ffb7ea029312570e4",
+      "country": "Rwandans",
+      "national_id": "123",
+      "province": "kigali",
+      "passport_no": "",
+      "country_name": "",
+      "dob": "2008-09-05",
+      "phone": "+250796089999",
+      "bio": "",
+      "profile_pic": null,
+      "created_at": "2025-08-14T07:34:12.136978"
+    }
+  ],
+  "posts": [
+    {
+      "id": "1507e0a8-c3b4-4505-b7b8-9599cf476d2a",
+      "username": "loic",
+      "content": "this is rwanda chat Project",
+      "media": [
+        "/uploads/4666b2e610914addb4c0e8a05109fe08_image-removebg-preview_1.png"
+      ],
+      "liked_by": [
+        "chantos",
+        "arsene",
+        "loic"
+      ],
+      "comments": [
+        {
+          "id": "414d6e3e-a213-4be8-b235-8a4f786fad20",
+          "username": "loic",
+          "text": "bro this perfect",
+          "created_at": "2025-08-14T07:21:51.700917"
+        },
+        {
+          "id": "927d5ad4-2560-447b-b37d-67cdb2261370",
+          "username": "arsene",
+          "text": "yh",
+          "created_at": "2025-08-14T07:37:59.437109"
+        }
+      ],
+      "created_at": "2025-08-13T15:37:16.319333"
+    }
+  ],
+  "stories": [
+    {
+      "id": "b3a331f5-1671-4d4e-b310-1e6f58179bd1",
+      "username": "loic",
+      "content": "today's pic",
+      "media": [
+        "/uploads/29959d9a54b342dc84f1623169958c6b_IMG-20250814-WA0009.jpg"
+      ],
+      "liked_by": [],
+      "comments": [],
+      "created_at": "2025-08-14T08:31:28.967895"
+    }
+  ],
+  "ads": [],
+  "messages": [
+    {
+      "id": "a98cca95-2ee7-4976-86ed-36671b60d9c9",
+      "sender": "loic",
+      "receiver": "loic",
+      "text": "hey",
+      "media": [],
+      "created_at": "2025-08-13T16:00:56.453395"
+    },
+    {
+      "id": "d4770b5a-3b5b-4613-962f-e550fc7ca32c",
+      "sender": "loic",
+      "receiver": "Arsene",
+      "text": "hey",
+      "media": [],
+      "created_at": "2025-08-14T07:21:19.312011"
+    },
+    {
+      "id": "0552370e-71df-4283-a537-3a0551d4ac95",
+      "sender": "arsene",
+      "receiver": "loic",
+      "text": "hey",
+      "media": [],
+      "created_at": "2025-08-14T08:09:14.769789"
+    },
+    {
+      "id": "ed15b4a6-18bb-4d39-b16e-d4d29f17f88a",
+      "sender": "loic",
+      "receiver": "arsene",
+      "text": "hey",
+      "media": [],
+      "created_at": "2025-08-14T08:27:52.171858"
+    },
+    {
+      "id": "a4255346-680f-486f-8f90-b98fdf25cc73",
+      "sender": "arsene",
+      "receiver": "loic",
+      "text": "amakuru x",
+      "media": [],
+      "created_at": "2025-08-14T08:29:15.609187"
+    },
+    {
+      "id": "ae396503-9670-433a-bd18-5957c0410474",
+      "sender": "arsene",
+      "receiver": "loic",
+      "text": "wow",
+      "media": [],
+      "created_at": "2025-08-14T08:30:27.997383"
+    },
+    {
+      "id": "078233bd-1bb9-42bf-911d-4b2c41fcbeec",
+      "sender": "loic",
+      "receiver": "loic",
+      "text": "amakuru mn",
+      "media": [],
+      "created_at": "2025-08-14T09:01:10.677085"
+    },
+    {
+      "id": "896beae9-1f0b-4948-aa23-9fbc1ca15704",
+      "sender": "loic",
+      "receiver": "loic",
+      "text": "ngiyo",
+      "media": [
+        "/uploads/a5ec6c497cac418aad3985acfec99419_IMG-20250814-WA0008.jpg"
+      ],
+      "created_at": "2025-08-14T09:02:20.163164"
+    },
+    {
+      "id": "cd7e44d4-01d7-4d34-96eb-60077c0efd8e",
+      "sender": "loic",
+      "receiver": "loic",
+      "text": "",
+      "media": [
+        "/uploads/88aa3e23e0e04dd48d83d06070d4f0a7_IMG-20250814-WA0009.jpg"
+      ],
+      "created_at": "2025-08-14T09:02:48.182514"
+    },
+    {
+      "id": "65b9a4f3-f131-4ccc-9475-888dd2894bde",
+      "sender": "chantos",
+      "receiver": "loic",
+      "text": "hey",
+      "media": [],
+      "created_at": "2025-08-22T14:27:34.480743"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "080a3a4c-e402-4a03-9c0b-3cb39f467271",
+      "user": "loic",
+      "text": "New message from loic",
+      "read": true,
+      "created_at": "2025-08-13T16:00:56.453481"
+    },
+    {
+      "id": "fc3449ee-0e6d-4336-b52d-6c5245e9e5d9",
+      "user": "loic",
+      "text": "chantos liked your post",
+      "read": true,
+      "created_at": "2025-08-13T17:23:05.813261"
+    },
+    {
+      "id": "e5ec93fe-7310-43ac-bc82-8429c2a0a1b7",
+      "user": "Arsene",
+      "text": "New message from loic",
+      "read": false,
+      "created_at": "2025-08-14T07:21:19.312082"
+    },
+    {
+      "id": "487640dc-3a81-47f4-b459-3601372a0c0f",
+      "user": "loic",
+      "text": "arsene liked your post",
+      "read": false,
+      "created_at": "2025-08-14T07:37:42.728003"
+    },
+    {
+      "id": "304af350-2563-471b-824a-87481318f3b8",
+      "user": "loic",
+      "text": "arsene commented on your post",
+      "read": false,
+      "created_at": "2025-08-14T07:37:59.437183"
+    },
+    {
+      "id": "54ed1ecf-8da7-4521-b2c2-91a14a771a14",
+      "user": "loic",
+      "text": "New message from arsene",
+      "read": true,
+      "created_at": "2025-08-14T08:09:14.769844"
+    },
+    {
+      "id": "5710e85f-3f48-4d2b-874a-5202ee3602f7",
+      "user": "arsene",
+      "text": "New message from loic",
+      "read": true,
+      "created_at": "2025-08-14T08:27:52.171945"
+    },
+    {
+      "id": "ce175469-eed7-48d0-9fa7-be1a2459d0f5",
+      "user": "loic",
+      "text": "New message from arsene",
+      "read": false,
+      "created_at": "2025-08-14T08:29:15.609213"
+    },
+    {
+      "id": "6b6fc14e-a449-4c36-b928-a75fbdb39579",
+      "user": "loic",
+      "text": "New message from arsene",
+      "read": true,
+      "created_at": "2025-08-14T08:30:27.997417"
+    },
+    {
+      "id": "31a6a925-b9f9-4302-b26e-64e555e1a97e",
+      "user": "loic",
+      "text": "New message from loic",
+      "read": true,
+      "created_at": "2025-08-14T09:01:10.677118"
+    },
+    {
+      "id": "60fb3c19-11c6-4168-8d04-50680ce01a91",
+      "user": "loic",
+      "text": "New message from loic",
+      "read": true,
+      "created_at": "2025-08-14T09:02:20.163195"
+    },
+    {
+      "id": "33d3b881-a17f-4802-9d79-fbe9c5cb2b71",
+      "user": "loic",
+      "text": "New message from loic",
+      "read": true,
+      "created_at": "2025-08-14T09:02:48.182560"
+    },
+    {
+      "id": "ec2ae86c-d592-4c58-8958-c521529e76df",
+      "user": "loic",
+      "text": "New message from chantos",
+      "read": true,
+      "created_at": "2025-08-22T14:27:34.480822"
+    }
+  ]
+}

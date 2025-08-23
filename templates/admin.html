@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RWC Dashboard</title>
+ <style>
+        /* ==== GLOBAL STYLES & VARIABLES ==== */
+        :root {
+            --primary-color: #004a99; /* A professional, deep blue */
+            --secondary-color: #f7b731; /* A warm, inviting yellow */
+            --bg-color: #f0f2f5;
+            --card-bg-color: #ffffff;
+            --text-color: #1c1e21;
+            --text-secondary-color: #65676b;
+            --light-gray: #ccd0d5;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --sidebar-width: 250px;
+            --mobile-nav-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        
+        /* ==== UTILITY CLASSES ==== */
+        .hidden { display: none !important; }
+
+        /* ==== LOADER ==== */
+        .loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        .loader {
+            border: 4px solid var(--light-gray);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ==== DASHBOARD LAYOUT ==== */
+        .dashboard-container { display: flex; }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--card-bg-color);
+            border-right: 1px solid var(--light-gray);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 20px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+
+        .nav-links { list-style: none; flex-grow: 1; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--text-secondary-color);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .nav-link i { width: 30px; font-size: 1.2rem; margin-right: 15px; }
+        .nav-link:hover { background-color: var(--bg-color); }
+        .nav-link.active {
+            color: var(--primary-color);
+            font-weight: bold;
+            background-color: #e7f3ff;
+            border-right: 3px solid var(--primary-color);
+        }
+
+        #logout-btn {
+            background: none; border: none; cursor: pointer; font-size: 1rem;
+            font-weight: 500; text-align: left; width: 100%;
+            padding: 15px 20px; color: var(--error-color);
+        }
+        #logout-btn i { width: 30px; font-size: 1.2rem; margin-right: 15px; }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .content-section { display: none; animation: fadeIn 0.5s; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        h2 { margin-bottom: 20px; color: var(--text-color); }
+
+        .section-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color); color: white; padding: 10px 15px;
+            border: none; border-radius: 8px; cursor: pointer;
+            font-size: 0.9rem; font-weight: bold; transition: background-color 0.2s;
+        }
+        .btn-primary:hover { background-color: #003366; }
+        .btn-secondary {
+            background-color: var(--light-gray); color: var(--text-color);
+            padding: 8px 12px; border: none; border-radius: 8px; cursor: pointer;
+        }
+
+        /* ==== COMPONENT STYLES ==== */
+        .card {
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 15px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .post-header { display: flex; align-items: center; margin-bottom: 10px; }
+        .post-header .avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; object-fit: cover; }
+        .post-header .username { font-weight: bold; }
+        .post-header .timestamp { color: var(--text-secondary-color); font-size: 0.8rem; margin-left: auto; }
+        .post-content p { margin-bottom: 10px; white-space: pre-wrap; }
+        .post-media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 5px; margin-top: 10px; }
+        .post-media { width: 100%; height: auto; object-fit: cover; border-radius: 8px; cursor: pointer; }
+        .post-actions { display: flex; align-items: center; gap: 20px; margin-top: 10px; border-top: 1px solid var(--bg-color); padding-top: 10px; }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; color: var(--text-secondary-color); display: flex; align-items: center; gap: 5px; }
+        .like-btn.liked { color: var(--error-color); }
+
+        /* Chat Section */
+        .chat-layout { display: flex; height: calc(100vh - 120px); background-color: var(--card-bg-color); border: 1px solid var(--light-gray); border-radius: 8px; }
+        .chat-partners { width: 35%; border-right: 1px solid var(--light-gray); overflow-y: auto; }
+        .chat-partner-item { display: flex; align-items: center; padding: 15px; cursor: pointer; border-bottom: 1px solid var(--bg-color); }
+        .chat-partner-item:hover, .chat-partner-item.active { background-color: var(--bg-color); }
+        .chat-partner-item .avatar { width: 45px; height: 45px; border-radius: 50%; margin-right: 10px; object-fit: cover; }
+        .chat-partner-item .name { font-weight: bold; }
+        .chat-window { width: 65%; display: flex; flex-direction: column; }
+        .chat-header { padding: 10px 15px; border-bottom: 1px solid var(--light-gray); font-weight: bold; }
+        .chat-window-placeholder { margin: auto; text-align: center; color: var(--text-secondary-color); }
+        #chat-messages-area { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .message-bubble { padding: 10px 15px; border-radius: 18px; max-width: 70%; line-height: 1.4; }
+        .message-bubble.sent { background-color: var(--primary-color); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .message-bubble.received { background-color: var(--bg-color); color: var(--text-color); align-self: flex-start; border-bottom-left-radius: 4px; }
+        #message-form { display: flex; padding: 10px; border-top: 1px solid var(--light-gray); }
+        #message-input { flex-grow: 1; border: 1px solid var(--light-gray); border-radius: 20px; padding: 10px 15px; font-size: 1rem; }
+        #message-form button { background: none; border: none; font-size: 1.5rem; color: var(--primary-color); cursor: pointer; margin-left: 10px; }
+
+        /* Explore & Ads */
+        .ads-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .ad-card { border: 1px solid var(--light-gray); border-radius: 8px; overflow: hidden; }
+        .ad-card .post-media { width: 100%; height: 150px; }
+        .ad-card .ad-content { padding: 15px; }
+
+        /* Stories / Updates */
+        .stories-list { display: flex; gap: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--light-gray); margin-bottom: 20px; overflow-x: auto;}
+        .story-item { text-align: center; cursor: pointer; flex-shrink: 0; }
+        .story-item .avatar { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--primary-color); padding: 2px; background-color: white; object-fit: cover; }
+        .story-item p { font-size: 0.8rem; margin-top: 5px; color: var(--text-secondary-color); }
+
+        /* Notifications */
+        .notification-list { list-style: none; }
+        .notification-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid var(--bg-color); cursor: pointer; transition: background-color 0.2s; }
+        .notification-item.unread { background-color: #e7f3ff; font-weight: bold; }
+        .notification-item:hover { background-color: var(--bg-color); }
+        .notification-item i { font-size: 1.5rem; color: var(--primary-color); margin-right: 15px; width: 30px; }
+
+        /* Profile */
+        .profile-details-card { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        #profile-pic-large { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        #profile-name { font-size: 1.5rem; font-weight: bold; margin-top: 10px; }
+        #profile-username { color: var(--text-secondary-color); }
+        #profile-bio { margin-top: 10px; }
+        #profile-phone { margin-top: 5px; }
+
+        /* Search */
+        #search-form { display: flex; gap: 10px; margin-bottom: 20px; }
+        #search-input { flex-grow: 1; padding: 10px; font-size: 1rem; border: 1px solid var(--light-gray); border-radius: 8px; }
+        #search-results-container h3 { margin-top: 20px; margin-bottom: 10px; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); display: none;
+            justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background-color: white; padding: 30px; border-radius: 8px;
+            width: 90%; max-width: 500px; position: relative;
+        }
+        .modal-close-btn {
+            position: absolute; top: 10px; right: 15px; background: none;
+            border: none; font-size: 1.8rem; cursor: pointer; color: var(--text-secondary-color);
+        }
+        .modal-content form { display: flex; flex-direction: column; gap: 15px; }
+        .modal-content form input, .modal-content form textarea, .modal-content form select {
+            width: 100%; padding: 10px; border: 1px solid var(--light-gray);
+            border-radius: 5px; font-size: 1rem;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            padding: 12px 20px; border-radius: 8px; color: white;
+            font-weight: bold; z-index: 2000; opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+        .toast.show { opacity: 1; bottom: 100px; }
+        .toast.success { background-color: var(--success-color); }
+        .toast.error { background-color: var(--error-color); }
+
+        /* MOBILE & RESPONSIVE */
+        .mobile-nav, .mobile-header { display: none; }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; width: 100%; padding: 15px; padding-bottom: calc(var(--mobile-nav-height) + 20px); }
+
+            .mobile-nav {
+                display: flex; position: fixed; bottom: 0; left: 0; width: 100%;
+                height: var(--mobile-nav-height); background-color: var(--card-bg-color);
+                border-top: 1px solid var(--light-gray); justify-content: space-around;
+                align-items: center; z-index: 500;
+            }
+            .mobile-nav-link { color: var(--text-secondary-color); font-size: 1.5rem; flex-grow: 1; text-align: center; padding: 10px 0; }
+            .mobile-nav-link.active { color: var(--primary-color); }
+
+            .mobile-header {
+                display: flex; justify-content: space-between; align-items: center;
+                padding-bottom: 15px; border-bottom: 1px solid var(--light-gray);
+                margin-bottom: 15px;
+            }
+            .mobile-header .logo { margin-bottom: 0; padding: 0; }
+            .mobile-header-icons { display: flex; gap: 15px; }
+            .nav-link-mobile-header { background: none; border: none; font-size: 1.5rem; color: var(--text-color); }
+
+            .chat-layout { flex-direction: column; height: calc(100vh - 150px); }
+            .chat-partners { width: 100%; height: 35%; border-right: none; border-bottom: 1px solid var(--light-gray); }
+            .chat-window { width: 100%; height: 65%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <h1 class="logo">RwandaChat</h1>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active" data-section="home"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                <li><a href="#" class="nav-link" data-section="chat"><i class="fas fa-comments"></i> <span>Chat</span></a></li>
+                <li><a href="#" class="nav-link" data-section="search"><i class="fas fa-search"></i> <span>Search</span></a></li>
+                <li><a href="#" class="nav-link" data-section="explore"><i class="fas fa-compass"></i> <span>Explore</span></a></li>
+                <li><a href="#" class="nav-link" data-section="updates"><i class="fas fa-history"></i> <span>Updates</span></a></li>
+                <li><a href="#" class="nav-link" data-section="notifications"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
+                <li><a href="#" class="nav-link" data-section="profile"><i class="fas fa-user"></i> <span>Profile</span></a></li>
+            </ul>
+            <a href="/logout" id="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+        </nav>
+
+        <main class="main-content">
+            <header class="mobile-header">
+                <h1 class="logo">RwandaChat</h1>
+                <div class="mobile-header-icons">
+                    <button class="nav-link-mobile-header" data-section="updates"><i class="fas fa-history"></i></button>
+                    <button class="nav-link-mobile-header" data-section="notifications"><i class="fas fa-bell"></i></button>
+                </div>
+            </header>
+
+            <section id="home" class="content-section active">
+                <div class="card create-post-card">
+                    <h3>Create Post</h3>
+                    <form id="create-post-form-main">
+                        <textarea name="content" placeholder="What's on your mind, {{ user.name }}?"></textarea>
+                        <div class="form-actions" style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                            <input type="file" name="media" multiple accept="image/*,video/*">
+                            <button type="submit" class="btn-primary">Post</button>
+                        </div>
+                    </form>
+                </div>
+                <h2>Home Feed</h2>
+                <div id="posts-feed" class="feed-container"><div class="loader-container"><div class="loader"></div></div></div>
+            </section>
+
+            <section id="chat" class="content-section">
+                <h2>Chat</h2>
+                <div class="chat-layout">
+                    <div id="chat-partners-list" class="chat-partners"><div class="loader-container"><div class="loader"></div></div></div>
+                    <div id="chat-window" class="chat-window">
+                        <div id="chat-header" class="chat-header hidden"></div>
+                        <div class="chat-window-placeholder">Select a conversation to start chatting.</div>
+                        <div id="chat-messages-area"></div>
+                        <form id="message-form" class="hidden">
+                            <input type="text" id="message-input" name="text" placeholder="Type a message..." autocomplete="off">
+                            <input type="hidden" id="message-receiver-input" name="receiver">
+                            <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section id="search" class="content-section">
+                <h2>Search</h2>
+                <form id="search-form">
+                    <input type="search" id="search-input" placeholder="Search for posts, ads, or users..." required>
+                    <button type="submit" class="btn-primary">Search</button>
+                </form>
+                <div id="search-results-container"></div>
+            </section>
+
+            <section id="explore" class="content-section">
+                <div class="section-header">
+                    <h2>Explore Ads</h2>
+                    <button id="create-ad-btn" class="btn-primary"><i class="fas fa-plus-circle"></i> Create New Ad</button>
+                </div>
+                <div id="ads-grid" class="ads-container"><div class="loader-container"><div class="loader"></div></div></div>
+            </section>
+            
+            <section id="updates" class="content-section">
+                 <div class="section-header">
+                    <h2>Updates (Stories)</h2>
+                    <button id="create-story-btn" class="btn-primary"><i class="fas fa-plus-circle"></i> Add Story</button>
+                </div>
+                <div id="stories-container" class="stories-list"><div class="loader-container"><div class="loader"></div></div></div>
+            </section>
+            
+            <section id="notifications" class="content-section">
+                <h2>Notifications</h2>
+                <ul id="notifications-list" class="notification-list"><div class="loader-container"><div class="loader"></div></div></ul>
+            </section>
+
+            <section id="profile" class="content-section">
+                <div class="section-header">
+                    <h2>Profile</h2>
+                    <button id="edit-profile-btn" class="btn-secondary"><i class="fas fa-edit"></i> Edit Profile</button>
+                </div>
+                <div class="card profile-details-card">
+                    <img src="{{ user.profile_pic or 'https://i.pravatar.cc/150' }}" alt="Profile Picture" id="profile-pic-large">
+                    <h3 id="profile-name">{{ user.name }}</h3>
+                    <p id="profile-username">@{{ user.username }}</p>
+                    <p id="profile-bio">{{ user.bio or 'No bio yet.' }}</p>
+                    <p id="profile-phone"><strong>Phone:</strong> {{ user.phone }}</p>
+                </div>
+            </section>
+        </main>
+
+        <nav class="mobile-nav">
+            <a href="#" class="mobile-nav-link active" data-section="home"><i class="fas fa-home"></i></a>
+            <a href="#" class="mobile-nav-link" data-section="chat"><i class="fas fa-comments"></i></a>
+            <a href="#" class="mobile-nav-link" data-section="search"><i class="fas fa-search"></i></a>
+            <a href="#" class="mobile-nav-link" data-section="explore"><i class="fas fa-compass"></i></a>
+            <a href="#" class="mobile-nav-link" data-section="profile"><i class="fas fa-user"></i></a>
+        </nav>
+    </div>
+
+    <div id="ad-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h3>Create a New Advertisement</h3>
+            <form id="create-ad-form">
+                <label for="ad-text">Ad Content:</label>
+                <textarea name="content" required placeholder="Describe your product or service..."></textarea>
+                <label for="ad-payment">Payment Method:</label>
+                <select name="payment" required>
+                    <option value="momo">Mobile Money</option>
+                    <option value="card">Credit Card</option>
+                    <option value="bank">Bank Transfer</option>
+                </select>
+                <label for="ad-media">Upload Media (Optional):</label>
+                <input type="file" name="media" multiple accept="image/*">
+                <button type="submit" class="btn-primary">Publish Ad</button>
+            </form>
+        </div>
+    </div>
+
+     <div id="story-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h3>Create a New Story</h3>
+            <form id="create-story-form">
+                <label for="story-text">Content:</label>
+                <textarea name="content" required placeholder="Add some text..."></textarea>
+                <label for="story-media">Upload Media:</label>
+                <input type="file" name="media" multiple accept="image/*,video/*" required>
+                <button type="submit" class="btn-primary">Share Story</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="edit-profile-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h3>Edit Your Profile</h3>
+            <form id="edit-profile-form">
+                <label for="edit-name">Name:</label>
+                <input type="text" id="edit-name" name="name" value="{{ user.name }}">
+                <label for="edit-bio">Bio:</label>
+                <textarea id="edit-bio" name="bio" placeholder="Tell us about yourself...">{{ user.bio }}</textarea>
+                <label for="edit-phone">Phone:</label>
+                <input type="tel" id="edit-phone" name="phone" value="{{ user.phone }}">
+                <label for="edit-profile-pic">Profile Picture:</label>
+                <input type="file" id="edit-profile-pic" name="profile_pic" accept="image/*">
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+ 
+
+<script>
+  const apiBase = ''; // adjust if your API is prefixed like /api or full URL
+
+  // Cache DOM references
+  const sidebarLinks = document.querySelectorAll('.sidebar a');
+  const mainContent = document.getElementById('main-content');
+
+  // Store current user info fetched from backend
+  let currentUser = null;
+
+  // Chat state
+  let currentChatPartner = null;
+  let chatMessages = [];
+
+  // Store posts/stories/ads for home, updates, explore etc.
+  let posts = [];
+  let stories = [];
+  let ads = [];
+  let notifications = [];
+
+  // Utility for creating DOM elements easily
+  function el(tag, attrs = {}, ...children) {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.substring(2), v);
+      else if (k === 'html') e.innerHTML = v;
+      else e.setAttribute(k, v);
+    }
+    for (const c of children) {
+      if (typeof c === 'string') e.appendChild(document.createTextNode(c));
+      else if (c) e.appendChild(c);
+    }
+    return e;
+  }
+
+  // === API Calls ===
+
+  async function apiGet(path) {
+    try {
+      const res = await fetch(apiBase + path, { credentials: 'same-origin' });
+      if (!res.ok) throw new Error(`API GET ${path} failed`);
+      return await res.json();
+    } catch (e) {
+      alert('Error fetching data: ' + e.message);
+      throw e;
+    }
+  }
+
+  async function apiPost(path, data) {
+    try {
+      const res = await fetch(apiBase + path, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error(`API POST ${path} failed`);
+      return await res.json();
+    } catch (e) {
+      alert('Error posting data: ' + e.message);
+      throw e;
+    }
+  }
+
+  // Form data post (for file uploads)
+  async function apiFormPost(path, formData) {
+    try {
+      const res = await fetch(apiBase + path, {
+        method: 'POST',
+        credentials: 'same-origin',
+        body: formData
+      });
+      if (!res.ok) throw new Error(`API POST ${path} failed`);
+      return await res.json();
+    } catch (e) {
+      alert('Error posting data: ' + e.message);
+      throw e;
+    }
+  }
+
+  // === Initialization ===
+
+  async function init() {
+    try {
+      currentUser = await apiGet('/api/profile');
+      await loadAllData();
+      renderSection('home');
+      setupSidebarEvents();
+      applyThemeSettings();
+    } catch (e) {
+      console.error(e);
+      mainContent.innerHTML = '<p>Error loading dashboard. Please login again.</p>';
+    }
+  }
+
+  async function loadAllData() {
+    [posts, stories, ads, notifications] = await Promise.all([
+      apiGet('/api/posts'),
+      apiGet('/api/stories'),
+      apiGet('/api/ads'),
+      apiGet('/api/notifications')
+    ]);
+  }
+
+  // === Sidebar navigation ===
+
+  function setupSidebarEvents() {
+    sidebarLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const section = link.dataset.section;
+        sidebarLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        renderSection(section);
+      });
+    });
+  }
+
+  // === Render sections ===
+
+  function renderSection(section) {
+    mainContent.innerHTML = '';
+    switch(section) {
+      case 'home': renderHome(); break;
+      case 'chat': renderChat(); break;
+      case 'search': renderSearch(); break;
+      case 'notification': renderNotification(); break;
+      case 'updates': renderUpdates(); break;
+      case 'explore': renderExplore(); break;
+      case 'profile': renderProfile(); break;
+      case 'settings': renderSettings(); break;
+      default:
+        mainContent.innerHTML = `<h1>${section}</h1><p>Not implemented yet.</p>`;
+    }
+  }
+
+  // === Helper render functions ===
+
+  function createPostCard(item, type = 'post') {
+    const liked = item.liked_by?.includes(currentUser.username);
+    const card = el('article', {class: 'card'});
+    card.append(
+      el('h3', {}, `${type.toUpperCase()} by ${item.username || 'unknown'}`),
+      el('small', {}, new Date(item.created_at).toLocaleString()),
+      el('p', {class:'content-text'}, item.content || ''),
+    );
+    if (item.media?.length) {
+      const mediaDiv = el('div', {class:'media-list'});
+      item.media.forEach(url => {
+        mediaDiv.append(el('img', {src: url, alt: `${type} media`}));
+      });
+      card.append(mediaDiv);
+    }
+    // Like & comment row
+    const likeBtn = el('button', {class: liked ? 'liked' : ''}, `👍 Like (${item.liked_by?.length || 0})`);
+    likeBtn.onclick = async () => {
+      try {
+        const resp = await apiPost('/api/like', {type, id: item.id});
+        if (resp.action) {
+          if (resp.action === 'liked') likeBtn.classList.add('liked');
+          else likeBtn.classList.remove('liked');
+          likeBtn.textContent = `👍 Like (${resp.liked_by.length})`;
+        }
+      } catch {}
+    };
+
+    card.append(el('div', {class:'like-comment-row'}, likeBtn));
+
+    // Comments (basic)
+    if (item.comments?.length) {
+      const commentsDiv = el('div', {style:'margin-top:10px; font-size: 0.9em; color: gray;'});
+      item.comments.slice(-3).forEach(c => {
+        commentsDiv.append(el('div', {}, `${c.username}: ${c.text}`));
+      });
+      card.append(commentsDiv);
+    }
+
+    return card;
+  }
+
+  function renderHome() {
+    mainContent.appendChild(el('h1', {}, 'Home'));
+
+    // Post creation form
+    const form = el('form');
+    const selectType = el('select', {name:'type'});
+    ['post','story','ad'].forEach(t => {
+      selectType.append(el('option', {value:t}, t.toUpperCase()));
+    });
+    const contentInput = el('textarea', {name:'content', rows:3, placeholder:"What's on your mind?"});
+    const mediaInput = el('input', {type:'file', name:'media', multiple:true});
+    const paymentInput = el('select', {name:'payment_method', style:'display:none; margin-top:8px;'});
+    ['Mpesa','Credit Card','Cash'].forEach(p => {
+      paymentInput.append(el('option', {value:p}, p));
+    });
+    const submitBtn = el('button', {type:'submit'}, 'Create');
+
+    form.append(selectType, contentInput, mediaInput, paymentInput, submitBtn);
+    mainContent.appendChild(form);
+
+    selectType.onchange = () => {
+      if (selectType.value === 'ad') paymentInput.style.display = 'block';
+      else paymentInput.style.display = 'none';
+    };
+
+    form.onsubmit = async e => {
+      e.preventDefault();
+      const fd = new FormData();
+      fd.append('content', contentInput.value.trim());
+      fd.append('media', mediaInput.files.length > 0 ? mediaInput.files[0] : '');
+      if (selectType.value === 'ad') {
+        fd.append('payment', paymentInput.value);
+      }
+      if (!contentInput.value.trim()) return alert('Content is required');
+      let apiPath = '';
+      if (selectType.value === 'post') apiPath = '/api/posts';
+      else if (selectType.value === 'story') apiPath = '/api/stories';
+      else if (selectType.value === 'ad') apiPath = '/api/ads';
+      else return alert('Invalid type');
+      try {
+        const response = await fetch(apiPath, {method:'POST', body: new FormData(form), credentials:'same-origin'});
+        if (!response.ok) {
+          const err = await response.json();
+          return alert(err.error || 'Error creating item');
+        }
+        alert(`${selectType.value.toUpperCase()} created!`);
+        contentInput.value = '';
+        mediaInput.value = '';
+        if (selectType.value === 'ad') paymentInput.style.display = 'none';
+        await loadAllData();
+        renderSection('home');
+      } catch (err) {
+        alert('Failed to create item');
+      }
+    };
+
+    // Show recent posts, stories, ads (combined)
+    const combined = [...ads, ...stories, ...posts].sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+    combined.forEach(item => {
+      if(item.type==='post' || posts.includes(item)) mainContent.appendChild(createPostCard(item,'post'));
+      else if(item.type==='story' || stories.includes(item)) mainContent.appendChild(createPostCard(item,'story'));
+      else if(item.type==='ad' || ads.includes(item)) mainContent.appendChild(createPostCard(item,'ad'));
+    });
+  }
+
+  function renderProfile() {
+    mainContent.appendChild(el('h1', {}, 'Profile'));
+    if (!currentUser) {
+      mainContent.appendChild(el('p', {}, 'User data not loaded.'));
+      return;
+    }
+    const info = el('div', {class:'card'});
+    info.append(
+      el('h3', {}, `Username: ${currentUser.username}`),
+      el('p', {}, `Email: ${currentUser.email}`),
+      el('p', {}, `Name: ${currentUser.name || ''}`),
+      el('p', {}, `Joined: ${new Date(currentUser.joined_at).toLocaleDateString()}`),
+    );
+    mainContent.appendChild(info);
+
+    // Show user posts (filter posts created by user)
+    const userPosts = posts.filter(p => p.username === currentUser.username);
+    mainContent.appendChild(el('h2', {}, 'Your Posts'));
+    if(userPosts.length === 0) {
+      mainContent.appendChild(el('p', {}, 'You have not created any posts yet.'));
+    } else {
+      userPosts.forEach(p => mainContent.appendChild(createPostCard(p,'post')));
+    }
+  }
+
+  async function renderChat() {
+    mainContent.appendChild(el('h1', {}, 'Chat'));
+
+    // Fetch conversations and users
+    let users = [];
+    try {
+      users = await apiGet('/api/users');
+    } catch {
+      mainContent.appendChild(el('p', {}, 'Failed to load users'));
+      return;
+    }
+    const container = el('div', {class:'chat-container'});
+    const chatList = el('div', {class:'chat-list'});
+    const chatWindow = el('div', {class:'chat-window'});
+
+    // List users as conversations
+    users.forEach(u => {
+      if(u.username === currentUser.username) return; // skip self
+      const chatUser = el('div', {class:'chat-user', tabindex: 0}, u.username);
+      chatUser.onclick = () => openChat(u.username, chatUser);
+      chatUser.onkeydown = e => {
+        if(e.key === 'Enter') openChat(u.username, chatUser);
+      };
+      chatList.appendChild(chatUser);
+    });
+
+    // Chat messages container
+    const messagesDiv = el('div', {class:'chat-messages'});
+    // Input box + send
+    const chatInputDiv = el('div', {class:'chat-input'});
+    const textarea = el('textarea', {placeholder: 'Type your message...'});
+    const sendBtn = el('button', {}, 'Send');
+    chatInputDiv.append(textarea, sendBtn);
+
+    sendBtn.onclick = async () => {
+      if(!currentChatPartner) return alert('Select a user to chat with');
+      if(!textarea.value.trim()) return;
+      try {
+        await apiPost('/api/chat/send', {
+          to: currentChatPartner,
+          message: textarea.value.trim()
+        });
+        textarea.value = '';
+        loadMessages(currentChatPartner);
+      } catch {
+        alert('Failed to send message');
+      }
+    };
+
+    chatWindow.append(messagesDiv, chatInputDiv);
+    container.append(chatList, chatWindow);
+    mainContent.appendChild(container);
+
+    function openChat(username, chatUserDiv) {
+      currentChatPartner = username;
+      chatList.querySelectorAll('.chat-user').forEach(cu => cu.classList.remove('active'));
+      chatUserDiv.classList.add('active');
+      loadMessages(username);
+    }
+
+    async function loadMessages(username) {
+      try {
+        chatMessages = await apiGet(`/api/chat/conversations/${username}`);
+        messagesDiv.innerHTML = '';
+        chatMessages.forEach(m => {
+          const msgDiv = el('div', {class: 'message ' + (m.from === currentUser.username ? 'from-me' : '')});
+          msgDiv.textContent = m.text;
+          const meta = el('div', {class: 'meta'}, new Date(m.created_at).toLocaleTimeString());
+          msgDiv.appendChild(meta);
+          messagesDiv.appendChild(msgDiv);
+        });
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      } catch {
+        messagesDiv.innerHTML = '<p>Error loading messages</p>';
+      }
+    }
+  }
+
+  async function renderSearch() {
+    mainContent.appendChild(el('h1', {}, 'Search'));
+    const input = el('input', {class: 'search-input', placeholder: 'Search users or posts...'});
+    const results = el('div', {class: 'search-results'});
+
+    input.oninput = async () => {
+      const q = input.value.trim();
+      if (q.length < 2) {
+        results.innerHTML = '';
+        return;
+      }
+      try {
+        const res = await apiGet(`/api/search?q=${encodeURIComponent(q)}`);
+        results.innerHTML = '';
+        if(res.users.length) {
+          results.appendChild(el('h3', {}, 'Users'));
+          res.users.forEach(u => {
+            results.appendChild(el('div', {}, u.username));
+          });
+        }
+        if(res.posts.length) {
+          results.appendChild(el('h3', {}, 'Posts'));
+          res.posts.forEach(p => {
+            results.appendChild(createPostCard(p));
+          });
+        }
+        if(!res.users.length && !res.posts.length) {
+          results.appendChild(el('p', {}, 'No results found'));
+        }
+      } catch {
+        results.innerHTML = '<p>Search error</p>';
+      }
+    };
+
+    mainContent.append(input, results);
+  }
+
+  async function renderNotification() {
+    mainContent.appendChild(el('h1', {}, 'Notifications'));
+    if (!notifications.length) {
+      mainContent.appendChild(el('p', {}, 'No notifications'));
+      return;
+    }
+    notifications.forEach(n => {
+      const item = el('div', {
+        class: 'notification-item' + (n.read ? '' : ' unread'),
+        tabindex: 0,
+        role: 'button',
+        'aria-pressed': n.read,
+        onClick: () => markNotificationRead(n.id)
+      }, n.text);
+      mainContent.appendChild(item);
+    });
+  }
+
+  async function markNotificationRead(id) {
+    try {
+      await apiPost('/api/notifications/read', {id});
+      notifications = notifications.map(n => n.id === id ? {...n, read:true} : n);
+      renderNotification();
+    } catch {
+      alert('Failed to mark notification read');
+    }
+  }
+
+  async function renderUpdates() {
+    mainContent.appendChild(el('h1', {}, 'Updates'));
+    // Show stories in timeline style
+    if(!stories.length) {
+      mainContent.appendChild(el('p', {}, 'No stories available'));
+      return;
+    }
+    stories.forEach(story => {
+      mainContent.appendChild(createPostCard(story,'story'));
+    });
+  }
+
+  async function renderExplore() {
+    mainContent.appendChild(el('h1', {}, 'Explore'));
+    // Mix of ads and posts for explore page
+    const combined = [...ads, ...posts].sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+    if(!combined.length) {
+      mainContent.appendChild(el('p', {}, 'No content to explore'));
+      return;
+    }
+    combined.forEach(item => {
+      mainContent.appendChild(createPostCard(item));
+    });
+  }
+
+  async function renderSettings() {
+    mainContent.appendChild(el('h1', {}, 'Settings'));
+
+    // Theme selector (mood)
+    const themeDiv = el('div', {class: 'settings-item'});
+    themeDiv.appendChild(el('label', {for:'theme-select'}, 'Select Mood (Theme)'));
+    const themeSelect = el('select', {id:'theme-select'});
+    ['light','dark'].forEach(t => {
+      themeSelect.appendChild(el('option', {value: t}, t.charAt(0).toUpperCase() + t.slice(1)));
+    });
+    themeDiv.appendChild(themeSelect);
+    mainContent.appendChild(themeDiv);
+
+    // Font selector
+    const fontDiv = el('div', {class:'settings-item'});
+    fontDiv.appendChild(el('label', {for:'font-select'}, 'Select Font'));
+    const fontSelect = el('select', {id:'font-select'});
+    ['Segoe UI','Arial','Verdana','Tahoma','Courier New','Georgia','Times New Roman'].forEach(f => {
+      fontSelect.appendChild(el('option', {value:f}, f));
+    });
+    fontDiv.appendChild(fontSelect);
+    mainContent.appendChild(fontDiv);
+
+    // Load saved preferences from localStorage
+    themeSelect.value = localStorage.getItem('rwc_theme') || 'light';
+    fontSelect.value = localStorage.getItem('rwc_font') || 'Segoe UI';
+
+    // Event listeners
+    themeSelect.onchange = e => {
+      localStorage.setItem('rwc_theme', e.target.value);
+      applyThemeSettings();
+    };
+    fontSelect.onchange = e => {
+      localStorage.setItem('rwc_font', e.target.value);
+      applyThemeSettings();
+    };
+  }
+
+  // Apply theme and font from localStorage
+  function applyThemeSettings() {
+    const theme = localStorage.getItem('rwc_theme') || 'light';
+    const font = localStorage.getItem('rwc_font') || 'Segoe UI';
+    document.documentElement.setAttribute('data-theme', theme);
+    document.body.style.fontFamily = font;
+  }
+
+  // Kickoff
+  init();
+
+</script>
+</body>
+</html>
