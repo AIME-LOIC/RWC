@@ -60,26 +60,41 @@
     .sidebar {
       width: var(--sidebar-width);
       height: 100vh;
-      background: black;
+      background: white;
+      color: black;
       border-right: 1px solid var(--light-gray);
       display:flex; flex-direction:column;
       position: fixed; top:0; left:0; padding:20px 0;
       transition: transform .3s ease;
     }
-    .logo { font-size: 1.8rem; font-weight: 800; color: var(--primary-color); padding: 0 20px; margin-bottom: 30px; }
+    .logo { font-size: 1.8rem; font-weight: 800; color: black; padding: 0 20px; margin-bottom: 30px; }
     .nav-links { list-style:none; flex-grow:1; }
     .nav-link {
       display:flex; align-items:center; gap:15px;
-      padding: 12px 20px; color: var(--text-secondary-color);
+      padding: 12px 20px; color: black;
       text-decoration: none; font-weight: 500;
       transition: background .2s, color .2s;
     }
     .nav-link i { width: 30px; font-size: 1.2rem; }
-    .nav-link:hover { background: var(--bg-color); }
+    /* .nav-link:hover { background: var(--bg-color); } */
     .nav-link.active {
       color: #fff; font-weight: 700;
       background: #00a1de; border-right: 3px solid #1a7e3c;
     }
+    .theme-dark .sidebar {
+  background: #000; /* dark background */
+  color: #fff;       /* white text for visibility */
+  border-right: 1px solid #222;
+}
+
+.theme-dark .sidebar .nav-link {
+  color: #fff; /* nav links text */
+}
+
+.theme-dark .sidebar .nav-link.active {
+  color: white; /* active link color, adjust if needed */
+}
+
     #logout-btn {
       background:none; border:none; cursor:pointer; font-size:1rem;
       font-weight: 600; text-align:left; width:100%;
@@ -296,7 +311,7 @@
     <nav class="sidebar">
       <ul class="nav-links">
         <li><a href="#" class="nav-link active" data-section="home"><i class="fas fa-home"></i><span>Home</span></a></li>
-        <li><a href="#" class="nav-link" data-section="chat"><i class="fas fa-comments"></i><span>Chat</span></a></li>
+        <li><a href="#" class="nav-link" data-section="chat"><i class="fas fa-comments" ></i><span>Chat</span></a></li>
         <li><a href="#" class="nav-link" data-section="search"><i class="fas fa-search"></i><span>Search</span></a></li>
         <li><a href="#" class="nav-link" data-section="explore"><i class="fas fa-compass"></i><span>Explore</span></a></li>
         <li><a href="#" class="nav-link" data-section="updates"><i class="fas fa-history"></i><span>Updates</span></a></li>
@@ -369,7 +384,7 @@
       <section id="search" class="content-section">
         <h2>Search</h2>
         <form id="search-form">
-          <input type="search" id="search-input" placeholder="Search for posts, ads, or users..." required/>
+          <input type="search" id="search-input" placeholder="Search for posts, ads, or users..." required style="height: 35px; width: 800px; border-radius: 10px;"/>
           <button type="submit" class="btn-primary">Search</button>
         </form>
         <div id="search-results-container"></div>
