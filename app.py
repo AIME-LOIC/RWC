@@ -77,9 +77,12 @@ def login_page():
 
 @app.route("/register", methods=["POST"])
 def register():
+    global data_store
+    data_store = load_data()  # ensure fresh data
+
     data = request.get_json() or {}
-    username = data.get("username", "").strip()
-    email= (data.get("email") or "").lower().strip()
+    username = (data.get("username") or "").lower().strip()  # normalize
+    email = (data.get("email") or "").lower().strip()
     name = data.get("name", "").strip()
     password = data.get("password", "")
     co_password = data.get("co_password", "")
@@ -127,6 +130,7 @@ def register():
     save_data()
 
     return jsonify(success=True, message="User registered successfully!")
+
 
 @app.route("/login", methods=["POST"])
 def login():
